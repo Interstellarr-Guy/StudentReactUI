@@ -1,83 +1,70 @@
 import React, { useEffect, useState } from "react";
+import api from "./api/api";
 
-export default function App() {
+export default function StudentsApp() {
   const [students, setStudents] = useState([]);
   const [form, setForm] = useState({ name: "", course: "" });
   const [error, setError] = useState("");
 
-  const API = "http://localhost:8080/cazoo/5122/list";
-
-  // GET students list
+  // GET students
   const loadStudents = () => {
-    fetch(API)
-      .then(res => res.json())
-      .then(data => setStudents(data))
-      .catch(err => console.error("Load error:", err));
+    api.get("/cazoo/5122/list")
+      .then(res => setStudents(res.data))
+      .catch(err => {
+        console.error(err);
+        setError("Failed to load students");
+      });
+  };
+
+  // ADD student
+  const addStudent = () => {
+    if (!form.name.trim() || !form.course.trim()) {
+      setError("All fields are required");
+      return;
+    }
+
+    api.post("/cazoo/5122/list", form)
+      .then(() => {
+        setForm({ name: "", course: "" });
+        loadStudents();
+      })
+      .catch(err => console.error(err));
+  };
+
+  // DELETE student
+  const deleteStudent = (id) => {
+    api.delete(`/cazoo/5122/list/${id}`)
+      .then(() => loadStudents())
+      .catch(err => console.error(err));
+  };
+
+  // UPDATE student
+  const updateStudent = (id) => {
+    if (!form.name.trim() || !form.course.trim()) {
+      setError("All fields required to update");
+      return;
+    }
+
+    api.put(`/cazoo/5122/list/${id}`, form)
+      .then(() => {
+        setForm({ name: "", course: "" });
+        loadStudents();
+      })
+      .catch(err => console.error(err));
   };
 
   const fillForm = (student) => {
-  setForm({ id: student.id, name: student.name, course: student.course });
-  setError("");
-};
-
-
-
-  useEffect(() => {
-    loadStudents(); 
-    
-// Load old list when page opens
-  }, []);
-
-  // POST add student
-  const addStudent = () => {
-    if (!form.name.trim() || !form.course.trim()) {
-      setError("All fields are required!");
-      return;
-    }
+    setForm({ name: student.name, course: student.course });
     setError("");
-
-    fetch("http://localhost:8080/cazoo/5122/list", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(form)
-    })
-      .then(res => res.json())
-      .then(() => {
-        setForm({ name: "", course: "" });
-        loadStudents(); // Auto refresh list after post
-      });
-  };            
-
-  const deleteStudent = (id) => {
-    fetch(`http://localhost:8080/cazoo/5122/list/${id}`, { method: "DELETE" })
-      .then(() => loadStudents());
   };
 
-  const updateStudent = (id) => {
-  if (!form.name.trim() || !form.course.trim()) {
-    setError("All fields required to update!");
-    return;
-  }
-  setError("");
-
-  fetch(`${API}/${id}`, {
-    method: "PUT",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(form)
-  }).then(() => {
-    setForm({ name: "", course: "" }); // clear after update
+  useEffect(() => {
     loadStudents();
-  });
-};
-
-
+  }, []);
 
   return (
     <div className="p-6">
-      <div className="head ">
-      <h1 className="text-4xl font-semibold mb-4 head2">Students API + MySQL</h1>
-      </div>
-      
+      <h1 className="text-4xl font-semibold mb-4">Students API + MySQL</h1>
 
       <div className="flex gap-3 mb-6">
         <input
@@ -94,43 +81,37 @@ export default function App() {
         />
         <button onClick={addStudent} className="px-3 py-2 border rounded">
           Add Student
-        </button> 
+        </button>
       </div>
 
-      {error && <p className="text-sm text-red-600 mb-3">{error}</p>}
+      {error && <p className="text-red-600 mb-3">{error}</p>}
 
-<div className="mt-4">
-  <h5></h5>
-</div>
-      <div className="mt-4">
-      <table className="border border-gray-600 border-separate w-full ">
+      <table className="border w-full">
         <thead>
-          <tr className="border gap-4">
-            <th className="border px-3 py-1">ID</th>
-            <th className="border px-3 py-1" >Name</th>
-            <th className="border px-3 py-1">Course</th>
-            <th className="border px-3 py-1">Actions</th>
+          <tr>
+            <th className="border px-3">ID</th>
+            <th className="border px-3">Name</th>
+            <th className="border px-3">Course</th>
+            <th className="border px-3">Actions</th>
           </tr>
         </thead>
         <tbody>
           {students.map(s => (
-            <tr key={s.id} className="border hover:bg-gray-800 transition-all">
-              <td className="border px-3 gap-2">{s.id}</td>
-              <td className="border px-3 gap-2 ml-3">{s.name}</td>
+            <tr key={s.id}>
+              <td className="border px-3">{s.id}</td>
+              <td className="border px-3">{s.name}</td>
               <td className="border px-3">{s.course}</td>
-              <td className="border px-3 py-1">
-                 <div className="flex gap-4 space-x-2">  {/* 👈 4px/4 unit gap between buttons */}
-                  <button onClick={() => fillForm(s)}         className="border px-2 rounded">Update</button>
-                  <button onClick={() => deleteStudent(s.id)} className="border px-2 rounded">Delete</button>
-                  <button onClick={() => updateStudent(s.id)} className="border px-2 rounded">Save Changes</button>
-                 </div>
-                </td>
-             </tr>
+              <td className="border px-3 flex gap-2">
+                <button onClick={() => fillForm(s)} className="border px-2">Edit</button>
+                <button onClick={() => deleteStudent(s.id)} className="border px-2">Delete</button>
+                <button onClick={() => updateStudent(s.id)} className="border px-2">Save</button>
+              </td>
+            </tr>
           ))}
         </tbody>
       </table>
-     </div>
-      {students.length === 0 && <p className="mt-3 text-gray-500 text-sm">No Cars found</p>}
+
+      {students.length === 0 && <p>No students found</p>}
     </div>
   );
 }
