@@ -102,7 +102,7 @@ export default function StudentsApp() {
               <td className="border px-3">{s.name}</td>
               <td className="border px-3">{s.course}</td>
               <td className="border px-3 flex gap-2">
-                <button onClick={() => fillForm(s)} className="border px-2">Edit</button>
+                <button onClick={() => fillForm(s)} className="border px-2">Edt</button>
                 <button onClick={() => deleteStudent(s.id)} className="border px-2">Delete</button>
                 <button onClick={() => updateStudent(s.id)} className="border px-2">Save</button>
               </td>
