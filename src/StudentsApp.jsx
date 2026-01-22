@@ -62,6 +62,12 @@ export default function StudentsApp() {
     loadStudents();
   }, []);
 
+  // 2201
+  useEffect(() => {
+  getStudents().then(data => setStudents(data));
+}, []);
+
+
   return (
     <div className="p-6">
       <h1 className="text-4xl font-semibold mb-4">Students API + MySQL</h1>
