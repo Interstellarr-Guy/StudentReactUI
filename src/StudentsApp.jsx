@@ -62,10 +62,13 @@ export default function StudentsApp() {
     loadStudents();
   }, []);
 
-  // 2201
+  // 2301
   useEffect(() => {
-  getStudents().then(data => setStudents(data));
+  getStudents()
+    .then(data => setStudents(data))
+    .catch(err => console.error(err));
 }, []);
+
 
 
   return (
