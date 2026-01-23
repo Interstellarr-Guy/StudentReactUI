@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import api from "./api/api";
+import { getStudents } from "./StudentService";
 
 export default function StudentsApp() {
   const [students, setStudents] = useState([]);
@@ -61,13 +62,6 @@ export default function StudentsApp() {
   useEffect(() => {
     loadStudents();
   }, []);
-
-  // 2301
-  useEffect(() => {
-  getStudents()
-    .then(data => setStudents(data))
-    .catch(err => console.error(err));
-}, []);
 
 
 

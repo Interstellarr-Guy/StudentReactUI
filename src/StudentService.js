@@ -1,3 +1,5 @@
+import api from "./api/api";
+
 export async function getStudents() {
   const token = localStorage.getItem("token");
 
