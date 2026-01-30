@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import api from "./api/api";
 import { getStudents } from "./StudentService";
+import { login } from "./auth"; // wherever login function is
+
 
 export default function StudentsApp() {
   const [students, setStudents] = useState([]);
@@ -59,9 +61,15 @@ export default function StudentsApp() {
     setError("");
   };
 
+  //Updated use effect
   useEffect(() => {
-    loadStudents();
-  }, []);
+  async function start() {
+    await login("admin", "admin");   // auto login
+    loadStudents();                  // now token exists
+  }
+  start();
+}, []);
+
 
 
 
