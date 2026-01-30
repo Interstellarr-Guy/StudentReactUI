@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import api from "./api/api";
 import { getStudents } from "./StudentService";
-import { login } from "./auth"; // wherever login function is
+import { login } from "./login"; // wherever login function is
 
 
 export default function StudentsApp() {
