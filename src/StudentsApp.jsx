@@ -64,7 +64,7 @@ export default function StudentsApp() {
   //Updated use effect
   useEffect(() => {
   async function start() {
-    await login("admin", "admin");   // auto login
+    await login("admin", "admin123");   // auto login
     loadStudents();                  // now token exists
   }
   start();
