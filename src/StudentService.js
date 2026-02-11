@@ -9,7 +9,7 @@ export async function getStudents() {
   }
 
   const response = await fetch(
-    "https://stuapi-production.up.railway.app/cazoo/5122/list",
+    "https://stuapi-s7jc.onrender.com/cazoo/5122/list",
     {
       method: "GET",
       headers: {
